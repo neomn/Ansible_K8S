@@ -1,0 +1,8 @@
+# install required ansible collections using this file like below example
+
+# collections:
+# - name: https://github.com/kubernetes-sigs/kubespray
+#   type: git
+#   version: v2.24.0
+
+
