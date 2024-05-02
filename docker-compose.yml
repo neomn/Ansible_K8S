@@ -1,0 +1,10 @@
+version: "3.8"
+
+services:
+  sweetiot-ansible:
+    image: neomn110/main:ansible.kubeadm.0.0.1
+    container_name: ansible-kubeadm
+    tty: true
+    volumes:
+      - ./ansible:/ansible
+      - ./files:/files
