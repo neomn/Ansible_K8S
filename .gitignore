@@ -1,0 +1,6 @@
+secrets
+.env*
+.secrets
+roles/setup_ssh/inventory
+*venv
+inventory-setup-ssh
