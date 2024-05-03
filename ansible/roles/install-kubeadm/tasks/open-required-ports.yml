@@ -1,1 +1,57 @@
+---
+# open admin node ports
+- name: Open control plane ports
+  iptables:
+    table: filter
+    chain: INPUT
+    protocol: tcp
+    destination_port: 6443
+    jump: ACCEPT
+  when: inventory_hostname in groups['kube_control_plane']
+
+- name: Open etcd ports
+  iptables:
+    table: filter
+    chain: INPUT
+    protocol: tcp
+    destination_port: 2379
+    jump: ACCEPT
+  when: inventory_hostname in groups['kube_control_plane']
+
+- name: Open etcd ports
+  iptables:
+    table: filter
+    chain: INPUT
+    protocol: tcp
+    destination_port: 2380
+    jump: ACCEPT
+  when: inventory_hostname in groups['kube_control_plane']
+
+- name: Open Kubelet API port
+  iptables:
+    table: filter
+    chain: INPUT
+    protocol: tcp
+    destination_port: 10250
+    jump: ACCEPT
+  when: inventory_hostname in groups['kube_control_plane']
+
+- name: Open kube-scheduler port
+  iptables:
+    table: filter
+    chain: INPUT
+    protocol: tcp
+    destination_port: 10259
+    jump: ACCEPT
+  when: inventory_hostname in groups['kube_control_plane']
+
+- name: Open kube-controller-manager port
+  iptables:
+    table: filter
+    chain: INPUT
+    protocol: tcp
+    destination_port: 10257
+    jump: ACCEPT
+  when: inventory_hostname in groups['kube_control_plane']
+
 
