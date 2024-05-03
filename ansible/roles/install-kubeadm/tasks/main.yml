@@ -7,7 +7,12 @@
     replace: '# \1'
   when: ansible_swaptotal_mb > 0
 
- 
+- name: install kubeadm | disable swap if it is enabled
+  command: swapoff -a
+  when: ansible_swaptotal_mb > 0
+
+- include_tasks: ./open-required-ports.yml
+  
 # - name: add kubernetes repository 
 
 # - name: update OS repository index
