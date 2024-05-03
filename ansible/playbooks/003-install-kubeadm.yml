@@ -14,3 +14,8 @@
     - include_tasks: ../roles/install-kubeadm/tasks/pre-flight-checks.yml
 
 
+- hosts: k8s_cluster
+  gather_facts: false
+  become: yes
+  roles: 
+    - { role: install-kubeadm } 
