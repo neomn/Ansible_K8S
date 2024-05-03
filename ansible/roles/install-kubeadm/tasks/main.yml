@@ -1,0 +1,19 @@
+--- 
+
+- name: install kubeadm | disable swap permanently if it is enabled
+  replace:
+    path: /etc/fstab
+    regexp: '^([^#].*?\sswap\s+sw\s+.*)$'
+    replace: '# \1'
+  when: ansible_swaptotal_mb > 0
+
+ 
+# - name: add kubernetes repository 
+
+# - name: update OS repository index
+
+# - name: install kubelet kubeadm kubectl
+
+# - name: enable kubelet service
+
+# - name: configure a cgroup driver
