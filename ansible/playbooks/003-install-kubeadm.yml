@@ -1,0 +1,11 @@
+---
+
+- hosts: k8s_cluster
+  gather_facts: false
+  tasks: 
+    - name: install kubeadm | gather facts
+      setup:
+
+
+
+
