@@ -7,5 +7,10 @@
       setup:
 
 
+- hosts: localhost
+  connection: local
+  gather_facts: false
+  tasks: 
+    - include_tasks: ../roles/install-kubeadm/tasks/pre-flight-checks.yml
 
 
