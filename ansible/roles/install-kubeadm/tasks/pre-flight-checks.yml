@@ -1,0 +1,30 @@
+---
+
+- name: pre-flight-checks | check if nodes ram >= 2GB
+  vars:
+    nodes_ram: "{{ dict(groups['all'] | zip(groups['all'] | map('extract', hostvars, 'ansible_memtotal_mb'))) }}"
+  fail:
+    msg: "!!! insufficient ram ( {{ item.value }} ) on node {{ item.key }}"
+  when: item.value < 2048 
+  ignore_errors: true
+  loop: "{{ nodes_ram | dict2items }}"
+
+- name: pre-flight-checks | check if hostnames are unique
+  vars: 
+    node_names: "{{ groups['all'] | map('extract', hostvars, 'ansible_hostname') }}"
+    node_count: "{{ node_names | length }}"
+    unique_host_names_count: "{{ node_names | unique | length }}"
+  assert:
+    that: 
+      - unique_host_names_count == node_count
+    fail_msg: "hostnames are not unique:  {{ node_names }}"
+
+- name: pre-flight-checks | check if nodes mac-address are unique
+  vars: 
+    nodes_mac: "{{ groups['all'] | map('extract', hostvars, 'ansible_default_ipv4') | map(attribute='macaddress') }}"
+    macs_count: "{{ nodes_mac | length }}"
+    unique_macs_count: "{{ nodes_mac | unique | length }}"
+  assert:
+    that: 
+      - unique_macs_count == macs_count
+    fail_msg: "mac-addresses are not unique:  {{ nodes_mac }}"
