@@ -1,0 +1,45 @@
+---
+
+- name: update repository index
+  apt:
+    update_cache: yes
+  
+
+- name: install fail2ban
+  apt:
+    name: fail2ban
+    state: present
+
+
+- name: copy firewall rules to the server
+  copy:
+    src: ../files/firewallsetup
+    dest: /etc
+
+
+- name: make firewall rules executable
+  shell: 
+    chmod +x /etc/firewallsetup/*
+
+
+- name: apply firewall rules
+  shell: |
+    /etc/firewallsetup/firewall 
+   
+
+- name: create /etc/iptables directory
+  file:
+    path: /etc/iptables
+    state: directory
+
+
+- name: presist iptables rules
+  shell: |
+    iptables-save > /etc/iptables/iptables.rules
+
+
+
+
+
+
+
