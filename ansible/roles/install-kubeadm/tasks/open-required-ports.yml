@@ -55,3 +55,30 @@
   when: inventory_hostname in groups['kube_control_plane']
 
 
+# open worker node ports
+- name: Open worker node ports
+  iptables:
+    table: filter
+    chain: INPUT
+    protocol: tcp
+    destination_port: 10250
+    jump: ACCEPT
+  when: inventory_hostname in groups['kube_node']
+
+- name: Open kube-proxy port
+  iptables:
+    table: filter
+    chain: INPUT
+    protocol: tcp
+    destination_port: 10256
+    jump: ACCEPT
+  when: inventory_hostname in groups['kube_node']
+
+- name: Open NodePort Services port range
+  iptables:
+    table: filter
+    chain: INPUT
+    protocol: tcp
+    destination_port: 30000:32767
+    jump: ACCEPT
+  when: inventory_hostname in groups['kube_node']
