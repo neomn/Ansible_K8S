@@ -1,0 +1,45 @@
+--- 
+
+- name: install kubeadm | install pre-requisits packages
+  apt:
+    name: "{{ item }}"
+    state: present
+  when: ansible_distribution == 'Ubuntu' or ansible_distribution == 'Debian'
+  with_items: 
+    - apt-transport-https 
+    - ca-certificates 
+    - curl 
+    - gpg
+
+- name: install kubeadm | Add Kubernetes repository signing key
+  apt_key:
+    url: https://pkgs.k8s.io/core:/stable:/v1.30/deb/Release.key
+    state: present
+    keyring: /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+
+- name: install kubeadm | Add Kubernetes repository to APT
+  apt_repository:
+    repo: 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.30/deb/ /'
+    state: present
+      
+- name: install kubeadm | update repository index
+  apt: 
+    update-cache: yes
+      
+- name: install kubeadm | install containerd kubeadm kubelet kubectl
+  apt:
+    name: "{{ item }}"
+    state: present
+  when: ansible_distribution == 'Ubuntu' or ansible_distribution == 'Debian'
+  with_items: 
+    - containerd=1.7.12-0ubuntu4
+    - kubelet=1.30.0-1.1
+    - kubeadm=1.30.0-1.1
+    - kubectl=1.30.0-1.1
+
+- name: install kubeadm | make sure kubelet service is running
+  systemd: 
+    name: kubelet
+    state: started
+    enabled: yes
+
