@@ -12,13 +12,5 @@
   when: ansible_swaptotal_mb > 0
 
 - include_tasks: ./open-required-ports.yml
-  
-# - name: add kubernetes repository 
+- include_tasks: ./install-required-packages.yml
 
-# - name: update OS repository index
-
-# - name: install kubelet kubeadm kubectl
-
-# - name: enable kubelet service
-
-# - name: configure a cgroup driver
