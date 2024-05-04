@@ -26,20 +26,4 @@
   apt: 
     update-cache: yes
       
-- name: install kubeadm | install containerd kubeadm kubelet kubectl
-  apt:
-    name: "{{ item }}"
-    state: present
-  when: ansible_distribution == 'Ubuntu' or ansible_distribution == 'Debian'
-  with_items: 
-    - containerd=1.7.12-0ubuntu4
-    - kubelet=1.30.0-1.1
-    - kubeadm=1.30.0-1.1
-    - kubectl=1.30.0-1.1
-
-- name: install kubeadm | make sure kubelet service is running
-  systemd: 
-    name: kubelet
-    state: started
-    enabled: yes
 
