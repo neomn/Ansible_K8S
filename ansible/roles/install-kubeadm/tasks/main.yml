@@ -13,4 +13,6 @@
 
 - include_tasks: ./open-required-ports.yml
 - include_tasks: ./install-required-packages.yml
+- include_tasks: ./create-cluster.yml
+- include_tasks: ./install-calico.yml
 
