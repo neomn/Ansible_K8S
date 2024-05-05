@@ -83,14 +83,9 @@
     jump: ACCEPT
   when: inventory_hostname in groups['kube_node']
 
-- name: Uncomment ip_forward line in sysctl.conf
-  lineinfile:
-    path: /etc/sysctl.conf
-    regexp: '^#net.ipv4.ip_forward=1'
-    line: 'net.ipv4.ip_forward=1'
-    state: present
-
-- name: Reload sysctl to apply new conf
+- name: Update sysctl configuration
   sysctl:
-    name: all
-    reload: yes
+    name: net.ipv4.ip_forward
+    value: '1'
+    sysctl_set: true
+    reload: true
