@@ -1,3 +1,7 @@
+- name: create kube-apiserver load balancer 
+
+- name: add admin nodes to the load balancer target group
+  
 - name: copy kubeadm ini config file into the admin1 
 
 - name: run kubeadm init
