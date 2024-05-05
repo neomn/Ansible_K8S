@@ -1,0 +1,9 @@
+- name: copy kubeadm ini config file into the admin1 
+
+- name: run kubeadm init
+
+- name: extract admin and worker tokens
+
+- name: join admin nodes except the admin1
+
+- name: join worker nodes
