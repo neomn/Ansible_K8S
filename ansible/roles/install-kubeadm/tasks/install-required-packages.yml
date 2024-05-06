@@ -5,27 +5,29 @@
     name: 
       - python3-pip
     state: present
-  when: inventory_host in groups['kube_control_plane']
+    update_cache: true
+  when: inventory_hostname in groups['kube_control_plane']
 
-- name: iinstall kubeadm | install ansible kubernetes module pre-requisites
+- name: install kubeadm | install ansible kubernetes module pre-requisites
   pip:
     name:
     - openshift
     - pyyaml
     - kubernetes 
-  when: inventory_host in groups['kube_control_plane']
+    state: present
+    extra_args: --break-system-packages
+  when: inventory_hostname in groups['kube_control_plane']
 
 - name: install kubeadm | install pre-requisits packages
   apt:
-    name: "{{ item }}"
+    name: 
+      - apt-transport-https 
+      - ca-certificates 
+      - curl 
+      - gpg
     state: present
   when: ansible_distribution == 'Ubuntu' or ansible_distribution == 'Debian'
-  with_items: 
-    - apt-transport-https 
-    - ca-certificates 
-    - curl 
-    - gpg
-
+    
 - name: install kubeadm | Add Kubernetes repository signing key
   apt_key:
     url: https://pkgs.k8s.io/core:/stable:/v1.30/deb/Release.key
@@ -37,21 +39,17 @@
     repo: 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.30/deb/ /'
     state: present
       
-- name: install kubeadm | update repository index
-  apt: 
-    update-cache: yes
-      
 - name: install kubeadm | install containerd kubeadm kubelet kubectl
   apt:
-    name: "{{ item }}"
+    name:
+      - containerd=1.7.12-0ubuntu4
+      - kubelet=1.30.0-1.1
+      - kubeadm=1.30.0-1.1
+      - kubectl=1.30.0-1.1
     state: present
+    update_cache: true
   when: ansible_distribution == 'Ubuntu' or ansible_distribution == 'Debian'
-  with_items: 
-    - containerd=1.7.12-0ubuntu4
-    - kubelet=1.30.0-1.1
-    - kubeadm=1.30.0-1.1
-    - kubectl=1.30.0-1.1
-
+    
 - name: install kubeadm | make sure kubelet service is running
   systemd: 
     name: kubelet
