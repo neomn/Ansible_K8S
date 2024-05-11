@@ -13,6 +13,10 @@
 
 - include_tasks: ./open-required-ports.yml
 - include_tasks: ./install-required-packages.yml
-- include_tasks: ./create-cluster.yml
-- include_tasks: ./install-calico.yml
+- include_tasks: ./kubeadm-init.yml
+# - include_tasks: ./apply-required-configs.yml
+# - include_tasks: ./install-calico.yml
+# - include_tasks: ./join-admin-nodes.yml
+# - include_tasks: ./join-worker-nodes.yml
+# - include_tasks: ./run-post-installation-cleanup.yml
 
