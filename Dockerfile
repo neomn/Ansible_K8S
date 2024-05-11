@@ -14,6 +14,7 @@ RUN    apk update && apk add \
        git \
        py3-jsonpatch=1.32-r2 \
        py3-yaml=6.0-r0 
+       fish
        
 WORKDIR  /ansible 
 RUN      pip install -r requirements.txt
