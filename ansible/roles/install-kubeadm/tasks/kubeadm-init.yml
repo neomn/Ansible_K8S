@@ -1,13 +1,19 @@
-- name: create kube-apiserver load balancer 
+--- 
 
-- name: add admin nodes to the load balancer target group
+- name: run kubeadm init command
+  shell: |
+    kubeadm init \
+      --control-plane-endpoint "{{ ansible_host:APISERVER_PORT }}" \
+      --pod-network-cidr 192.168.0.0/16                            \
+      --upload-certs                                               \   
+      --ignore-preflight-errors NumCPU                           
+  run_once: true
+  when: inventory_hostname in groups['kube_control_plane']
+  register: kubeadm-init-result
   
-- name: copy kubeadm ini config file into the admin1 
 
-- name: run kubeadm init
+- name: print init result
+  var: kubeadm-init-result
 
-- name: extract admin and worker tokens
+- name:
 
-- name: join admin nodes except the admin1
-
-- name: join worker nodes
