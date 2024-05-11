@@ -50,8 +50,8 @@
     update_cache: true
   when: ansible_distribution == 'Ubuntu' or ansible_distribution == 'Debian'
     
-- name: install kubeadm | make sure kubelet service is running
-  systemd: 
-    name: kubelet
-    state: started
-    enabled: yes
+# - name: install kubeadm | make sure kubelet service is running
+#   systemd: 
+#     name: kubelet
+#     state: started
+#     enabled: yes
