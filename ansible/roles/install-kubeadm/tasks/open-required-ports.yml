@@ -83,7 +83,7 @@
     jump: ACCEPT
   when: inventory_hostname in groups['kube_node']
 
-- name: Update sysctl configuration
+- name: enable ipv4 packet forwarding
   sysctl:
     name: net.ipv4.ip_forward
     value: '1'
