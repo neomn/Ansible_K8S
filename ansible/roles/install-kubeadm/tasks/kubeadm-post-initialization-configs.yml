@@ -1,43 +1,55 @@
-
 ---
-- block:
-    - name: export kubeadm config path
-      become: true
-      environment:
-        KUBECONFIG: "/etc/kubernetes/admin.conf"
-
-    - name: check if coredns-configmap already applied
-      stat: 
-        path: /tmp/coredns-configmap.yaml
-      register: corednsfile
-
-    - name: get core-dns config map
-      become: true
-      shell: |
-        kubectl get -n kube-system cm coredns -o yaml > /tmp/coredns-configmap.yaml
-      when: not corednsfile.stat.exists
-
-    - name: set forward to /etc/systemd/resolved.conf
-      become: true
-      replace: 
-        path: /tmp/coredns-configmap.yaml
-        regexp: '^forward \..*'
-        replace: 'forward . /etc/systemd/resolved.conf'
-      when: not corednsfile.stat.exists
-
-    - name: appy modified core-dns config map
-      become: true
-      k8s: 
-        state: present
-        src: /tmp/coredns-configmap.yaml
-      when: not corednsfile.stat.exists
-  when: inventory_hostname == groups['kube_control_plane'][0]
 
 - name: set hostnames in /etc/hosts
   become: true
   lineinfile:
     dest: /etc/hosts
-    line: "{{ hostvars[item]['ansible_host'] }} {{ item }}"
+    line: "{{ hostvars[item]['ansible_host'] }} {{ hostvars[item]['ansible_nodename'] }}"
     state: present
-  loop: "{{ groups['all'] }}"
+  loop: "{{ groups['all'] | difference([inventory_hostname]) }}"
 
+- name: set KUBECONFIG env var
+  become: true
+  lineinfile:
+    path: /root/.bashrc
+    line: "export KUBECONFIG=/etc/kubernetes/admin.conf"
+  when: inventory_hostname in groups['kube_control_plane']
+
+- block:
+    - name: config coredns
+      become: true
+      k8s:
+        state: present
+        definition:
+          apiVersion: v1
+          data:
+            Corefile: |
+              .:53 {
+                  errors
+                  health {
+                     lameduck 5s
+                  }
+                  ready
+                  kubernetes cluster.local in-addr.arpa ip6.arpa {
+                     pods insecure
+                     fallthrough in-addr.arpa ip6.arpa
+                     ttl 30
+                  }
+                  prometheus :9153
+                  forward . /etc/systemd/resolved.conf {
+                     max_concurrent 1000
+                  }
+                  cache 30
+                  loop
+                  reload
+                  loadbalance
+              }
+          kind: ConfigMap
+          metadata:
+            name: coredns
+            namespace: kube-system
+        apply: yes
+        server_side_apply:
+          field_manager: ansible
+
+  when: inventory_hostname == groups['kube_control_plane'][0]
