@@ -1,7 +1,6 @@
 ---
 
 - name: set hostnames in /etc/hosts
-  become: true
   lineinfile:
     dest: /etc/hosts
     line: "{{ hostvars[item]['ansible_host'] }} {{ hostvars[item]['ansible_nodename'] }}"
@@ -9,10 +8,42 @@
   loop: "{{ groups['all'] | difference([inventory_hostname]) }}"
 
 - name: set KUBECONFIG env var
-  become: true
   lineinfile:
     path: /root/.bashrc
     line: "export KUBECONFIG=/etc/kubernetes/admin.conf"
   when: inventory_hostname in groups['kube_control_plane']
 
-
+- name: patch coredns configmap to use /etc/systemd/resolved.conf as dns                                                                                                                                                                                                             
+  environment:
+    KUBECONFIG: "/etc/kubernetes/admin.conf"
+  k8s:                                                                                                                                                                                                                                    
+    state: patched
+    definition:                                                                                                                                                                                                                           
+      apiVersion: v1                                                                                                                                                                                                                      
+      kind: ConfigMap                                                                                                                                                                                                                     
+      metadata:
+        name: coredns
+        namespace: kube-system
+      data:
+        Corefile: |
+          .:53 {
+              errors
+              health {
+                 lameduck 5s
+              }
+              ready
+              kubernetes cluster.local in-addr.arpa ip6.arpa {
+                 pods insecure
+                 fallthrough in-addr.arpa ip6.arpa
+                 ttl 30
+              }
+              prometheus :9153
+              forward . /etc/systemd/resolved.conf {
+                 max_concurrent 1000
+              }
+              cache 30
+              loop
+              reload
+              loadbalance
+          }
+  when: inventory_hostname == groups['kube_control_plane'][0]
