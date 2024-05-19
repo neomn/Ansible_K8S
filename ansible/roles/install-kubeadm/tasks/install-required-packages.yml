@@ -1,23 +1,4 @@
 --- 
-
-- name: install pip
-  apt: 
-    name: 
-      - python3-pip
-    state: present
-    update_cache: true
-  when: inventory_hostname in groups['kube_control_plane']
-
-- name: install ansible kubernetes module pre-requisites
-  pip:
-    name:
-    - openshift
-    - pyyaml
-    - kubernetes 
-    state: present
-    extra_args: --break-system-packages
-  when: inventory_hostname in groups['kube_control_plane']
-
 - name: install pre-requisits packages
   apt:
     name: 

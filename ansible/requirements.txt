@@ -9,3 +9,6 @@ pbr==5.11.1
 ruamel.yaml==0.17.35
 ruamel.yaml.clib==0.2.8
 ipaddr==2.2.0
+openshift==0.13.2
+pyyaml==6.0
+kubernetes==29.0.0
