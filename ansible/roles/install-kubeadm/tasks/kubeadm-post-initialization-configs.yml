@@ -1,30 +1,22 @@
 ---
 
-# - name: set hostnames in /etc/hosts
-#   lineinfile:
-#     dest: /etc/hosts
-#     line: "{{ hostvars[item]['ansible_host'] }} {{ hostvars[item]['ansible_nodename'] }}"
-#     state: present
-#   loop: "{{ groups['all'] | difference([inventory_hostname]) }}"
-#
-# - name: set KUBECONFIG env var
-#   lineinfile:
-#     path: /root/.bashrc
-#     line: "export KUBECONFIG=/etc/kubernetes/admin.conf"
-#   when: inventory_hostname in groups['kube_control_plane']
-#
+- name: set hostnames in /etc/hosts
+  lineinfile:
+    dest: /etc/hosts
+    line: "{{ hostvars[item]['ansible_host'] }} {{ hostvars[item]['ansible_nodename'] }}"
+    state: present
+  loop: "{{ groups['all'] | difference([inventory_hostname]) }}"
+
+- name: set KUBECONFIG env var
+  lineinfile:
+    path: /root/.bashrc
+    line: "export KUBECONFIG=/etc/kubernetes/admin.conf"
+  when: inventory_hostname in groups['kube_control_plane'][0]
+
 - name: patch coredns configmap to use /etc/systemd/resolved.conf as dns                                                                                                                                                                                                             
   environment:
     KUBECONFIG: "/etc/kubernetes/admin.conf"
   k8s:                                                                                                                                                                                                                                    
     state: present
     definition: "{{ lookup('file', '/ansible/roles/install-kubeadm/files/coredns-config.yml' | from_yaml )}}"
-  when: inventory_hostname == groups['kube_control_plane'][0]
-
-- name: patch kubelet configmap to use /etc/systemd/resolved.conf as dns resolver
-  environment:
-    KUBECONFIG: "/etc/kubernetes/admin.conf"
-  k8s:                                                                                                                                                                                                                                    
-    state: present
-    definition: "{{ lookup('file', '/ansible/roles/install-kubeadm/files/kubelet-config.yml' | from_yaml )}}"
   when: inventory_hostname == groups['kube_control_plane'][0]
