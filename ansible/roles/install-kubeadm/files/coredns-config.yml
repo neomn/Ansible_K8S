@@ -17,7 +17,7 @@ data:
            ttl 30
         }
         prometheus :9153
-        forward . /etc/systemd/resolved.conf {
+        forward . /run/systemd/resolve/resolv.conf {
            max_concurrent 1000
         }
         cache 30
