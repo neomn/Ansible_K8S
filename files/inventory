@@ -3,6 +3,7 @@
 
 admin1    ansible_host=5.42.95.45       ansible_user=ansible   ip=5.42.95.45    
 admin2    ansible_host=77.232.142.121   ansible_user=ansible   ip=77.232.142.121
+admin3    ansible_host=5.42.84.28       ansible_user=ansible   ip=5.42.84.28
 worker1   ansible_host=77.232.142.146   ansible_user=ansible   ip=77.232.142.146
 worker2   ansible_host=5.42.83.254      ansible_user=ansible   ip=5.42.83.254   
 
