@@ -1,20 +1,8 @@
 --- 
-
-# - name: modify swap configs to disabling it permanently
-#   replace:
-#     path: /etc/fstab
-#     regexp: '^([^#].*?\sswap\s+sw\s+.*)$'
-#     replace: '# \1'
-#   when: ansible_swaptotal_mb > 0
-#
-# - name: disable swap
-#   command: swapoff -a
-#   when: ansible_swaptotal_mb > 0
-#
+# - include_tasks: ./disable-swap.yml
 # - include_tasks: ./open-required-ports.yml
 # - include_tasks: ./install-required-packages.yml
 # - include_tasks: ./kubeadm-init.yml
-- include_tasks: ./kubeadm-post-initialization-configs.yml
+- include_tasks: ./post-init-ops.yml
 # - include_tasks: ./install-calico.yml
-# - include_tasks: ./run-post-installation-cleanup.yml
-
+# - include_tasks: ./cleanup.yml
