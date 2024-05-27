@@ -6,9 +6,17 @@
       - ca-certificates 
       - curl 
       - gpg
+      - python3-pip=24.0+dfsg-1ubuntu1  
     state: present
   when: ansible_distribution == 'Ubuntu' or ansible_distribution == 'Debian'
     
+- name: install required packages | install ansible k8s module dependencies 
+  pip: 
+    - pyyaml==6.0
+    - kubernetes==29.0.0
+    - jsonpatch==1.32
+  when: inventory_hostname in groups['kube_control_plane']
+
 - name: install required packages | add Kubernetes repository signing key
   apt_key:
     url: https://pkgs.k8s.io/core:/stable:/v1.30/deb/Release.key
