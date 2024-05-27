@@ -1,9 +1,12 @@
 ---
 
 - name: set hostnames in /etc/hosts
+  vars: 
+    ip: "{{ hostvars[item]['ansible_host'] }}" 
+    node_name: "{{ hostvars[item]['ansible_nodename'] }}" 
   lineinfile:
     dest: /etc/hosts
-    line: "{{ hostvars[item]['ansible_host'] }} {{ hostvars[item]['ansible_nodename'] }}"
+    line: "{{ ip }} {{ node_name }}"
     state: present
   loop: "{{ groups['all'] | difference([inventory_hostname]) }}"
 
