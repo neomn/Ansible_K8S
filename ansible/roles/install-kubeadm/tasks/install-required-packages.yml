@@ -1,5 +1,5 @@
 --- 
-- name: install pre-requisits packages
+- name: install required packages | install pre-requisits packages
   apt:
     name: 
       - apt-transport-https 
@@ -9,7 +9,7 @@
     state: present
   when: ansible_distribution == 'Ubuntu' or ansible_distribution == 'Debian'
     
-- name: add Kubernetes repository signing key
+- name: install required packages | add Kubernetes repository signing key
   apt_key:
     url: https://pkgs.k8s.io/core:/stable:/v1.30/deb/Release.key
     state: present
@@ -20,9 +20,10 @@
     repo: 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.30/deb/ /'
     state: present
       
-- name: install containerd kubeadm kubelet kubectl
+- name: install required packages | install containerd kubeadm kubelet kubectl
   apt:
     name:
+      - containerd=1.7.12-0ubuntu4
       - kubelet=1.30.0-1.1
       - kubeadm=1.30.0-1.1
       - kubectl=1.30.0-1.1
@@ -30,3 +31,14 @@
     update_cache: true
   when: ansible_distribution == 'Ubuntu' or ansible_distribution == 'Debian'
 
+- name: install required packages | create /etc/containerd
+  file:
+    path: /etc/containerd
+    state: directory
+
+- name: install required packages | config containerd 
+  copy: 
+    src: ../files/containerd-config.toml
+    dest: /etc/containerd/config.toml
+    mode: 0644
+  notify: restart-containerd
