@@ -4,3 +4,8 @@
   service:
     name: containerd
     state: restarted
+
+- name: restart_systemd_resolved
+  service: 
+    name: systemd-resolved
+    state: restarted
