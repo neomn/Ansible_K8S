@@ -1,0 +1,15 @@
+- hosts: kube_control_plane[0]
+  gather_facts: false
+  become: true
+  tasks:
+    - name: join worker nodes | create token
+      command: kubeadm token create --print-join-command
+      register: join_command
+
+- hosts: kube_node
+  gather_facts: false
+  become: true
+  tasks:
+    - name: join worker nodes | run join command
+      command: "{{ hostvars[ groups['kube_control_plane'][0] ].join_command.stdout }}"
+
