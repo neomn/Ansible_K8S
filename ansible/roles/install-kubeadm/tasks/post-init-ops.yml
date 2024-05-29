@@ -1,15 +1,17 @@
 ---
 
-- name: set KUBECONFIG env var
-  lineinfile:
-    path: /root/.bashrc
-    line: "export KUBECONFIG=/etc/kubernetes/admin.conf"
-  when: inventory_hostname in groups['kube_control_plane'][0]
+- block: 
+  
+    - name: set KUBECONFIG env var
+      lineinfile:
+        path: /root/.bashrc
+        line: "export KUBECONFIG=/etc/kubernetes/admin.conf"
 
-- name: patch coredns configmap to use /etc/systemd/resolved.conf as dns                                                                                                                                                                                                             
-  environment:
-    KUBECONFIG: "/etc/kubernetes/admin.conf"
-  k8s:                                                                                                                                                                                                                                    
-    state: present
-    definition: "{{ lookup('file', '/ansible/roles/install-kubeadm/files/coredns-config.yml' | from_yaml )}}"
+    - name: patch coredns configmap
+      environment:
+        KUBECONFIG: "/etc/kubernetes/admin.conf"
+      k8s:                                                                                                                                                                                                                                    
+        state: present
+        definition: "{{ lookup('file', '/ansible/roles/install-kubeadm/files/coredns-config.yml' | from_yaml )}}"
+          
   when: inventory_hostname == groups['kube_control_plane'][0]
