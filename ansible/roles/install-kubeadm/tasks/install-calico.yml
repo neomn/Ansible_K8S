@@ -47,4 +47,4 @@
     #   retries: 20
     #   delay: 10 
 
-  when: inventory_hostname == groups['kube_cotrol_plane'][0]
+  when: inventory_hostname == groups['kube_control_plane'][0]
