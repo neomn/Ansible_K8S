@@ -1,5 +1,5 @@
 ---
-
+      
 - name: Create ansible user
   user:
     name:        ansible
@@ -42,4 +42,11 @@
     owner: root
     group: root
     mode:  0644
-  notify: restart_sshd
+
+# since ssh port is defined in group_vars and refrenced dynamically , 
+# notify will not trigger ssh restart, so that's whey im using a 
+# separate task to reload daemon and restart ssh service
+- name: restart ssh
+  shell: |
+    systemctl daemon-reload
+    systemctl restart ssh

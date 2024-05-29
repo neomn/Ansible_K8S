@@ -1,13 +1,13 @@
 
 
 password-ping:
-	ansible -i /files/inventory-setup-ssh -e ansible_port=22 -m ping all
+	ansible -i /files/inventory-setup-ssh -m ping all
 
 ping:
 	ansible -m ping all
 
 setup-ssh:
-	ansible-playbook -i /files/inventory-setup-ssh  -e ansible_port=22  playbooks/001-setup-ssh-connection.yml
+	ansible-playbook -i /files/inventory-setup-ssh   playbooks/001-setup-ssh-connection.yml
 
 install-kubeadm:
 	ansible-playbook /ansible/playbooks/003-install-kubeadm.yml
