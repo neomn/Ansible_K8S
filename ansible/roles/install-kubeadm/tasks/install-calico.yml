@@ -1,18 +1,5 @@
 - block:
-  
-    # - name: install calico | create /etc/NetworkManager/conf.d
-    #   file: 
-    #     path: /etc/NetworkManager/conf.d
-    #     state: directory
-    #
-    # - name: install calico | disable OS network manager
-    #   copy: 
-    #     src: ../files/network-manager.conf
-    #     dest: /etc/NetworkManager/conf.d/calico.conf
-    #     mode: 0644
-    #     state: present
-    #   notify: restart_network_manager
-      
+     
     - name: install calico | download tigera.yaml
       get_url: 
         url: https://raw.githubusercontent.com/projectcalico/calico/v3.28.0/manifests/tigera-operator.yaml
@@ -35,16 +22,7 @@
         state: present
         src: ~/calico.yaml
       
-    # - name: install calico | wait untill calico pods are in running state
-    #   k8s_info:
-    #     kind: Pod
-    #     namespace: kube-system
-    #     label_selectors:
-    #       - k8s-app=calico-node
-    #   register: calico_pods
-    #   until:
-    #     - calico_pods.resources | map(attribute='status.phase') | select('match', 'Running') | list | length == (calico_pods.resources | length)
-    #   retries: 20
-    #   delay: 10 
-
   when: inventory_hostname == groups['kube_control_plane'][0]
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
+ 
