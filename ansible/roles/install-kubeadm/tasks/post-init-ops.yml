@@ -2,12 +2,12 @@
 
 - block: 
   
-    - name: set KUBECONFIG env var
+    - name: post init ops | set KUBECONFIG env var
       lineinfile:
         path: /root/.bashrc
         line: "export KUBECONFIG=/etc/kubernetes/admin.conf"
 
-    - name: patch coredns configmap
+    - name: post init ops | patch coredns configmap
       environment:
         KUBECONFIG: "/etc/kubernetes/admin.conf"
       k8s:                                                                                                                                                                                                                                    

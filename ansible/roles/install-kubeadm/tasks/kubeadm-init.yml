@@ -1,10 +1,10 @@
 --- 
 
-- name: run kubeadm init command
+- name: kubeadm init | run kubeadm init command
   shell: |
     kubeadm init \
       --control-plane-endpoint "{{ ansible_host }}:{{ APISERVER_PORT }}"  \
       --pod-network-cidr 192.168.0.0/16                                   \
       --upload-certs                                                      \
       --ignore-preflight-errors NumCPU                           
-  when: inventory_hostname in groups['kube_control_plane'][0]
+  when: inventory_hostname == groups['kube_control_plane'][0]

@@ -1,6 +1,6 @@
 ---
 # open admin node ports
-- name: Open control plane ports
+- name: open required ports | control plane 
   iptables:
     table: filter
     chain: INPUT
@@ -9,25 +9,16 @@
     jump: ACCEPT
   when: inventory_hostname in groups['kube_control_plane']
 
-- name: Open etcd ports
+- name: open required ports | etcd
   iptables:
     table: filter
     chain: INPUT
     protocol: tcp
-    destination_port: 2379
+    destination_port: 2379:2380
     jump: ACCEPT
   when: inventory_hostname in groups['kube_control_plane']
 
-- name: Open etcd ports
-  iptables:
-    table: filter
-    chain: INPUT
-    protocol: tcp
-    destination_port: 2380
-    jump: ACCEPT
-  when: inventory_hostname in groups['kube_control_plane']
-
-- name: Open Kubelet API port
+- name: open required ports | Kubelet API
   iptables:
     table: filter
     chain: INPUT
@@ -36,7 +27,7 @@
     jump: ACCEPT
   when: inventory_hostname in groups['kube_control_plane']
 
-- name: Open kube-scheduler port
+- name: open required ports | kube-scheduler
   iptables:
     table: filter
     chain: INPUT
@@ -45,7 +36,7 @@
     jump: ACCEPT
   when: inventory_hostname in groups['kube_control_plane']
 
-- name: Open kube-controller-manager port
+- name: open required ports | kube-controller-manager
   iptables:
     table: filter
     chain: INPUT
@@ -56,7 +47,7 @@
 
 
 # open worker node ports
-- name: Open worker node ports
+- name: open required ports | worker node
   iptables:
     table: filter
     chain: INPUT
@@ -65,7 +56,7 @@
     jump: ACCEPT
   when: inventory_hostname in groups['kube_node']
 
-- name: Open kube-proxy port
+- name: open required ports | kube-proxy
   iptables:
     table: filter
     chain: INPUT
@@ -74,7 +65,7 @@
     jump: ACCEPT
   when: inventory_hostname in groups['kube_node']
 
-- name: Open NodePort Services port range
+- name: open required ports | NodePort Services port range
   iptables:
     table: filter
     chain: INPUT
@@ -83,7 +74,7 @@
     jump: ACCEPT
   when: inventory_hostname in groups['kube_node']
 
-- name: enable ipv4 packet forwarding
+- name: open required ports | enable ipv4 packet forwarding
   sysctl:
     name: net.ipv4.ip_forward
     value: '1'

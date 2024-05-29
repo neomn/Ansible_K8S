@@ -1,21 +1,21 @@
 ---
-- name: modify swap configs to disabling it permanently
+- name: pre-ini-ops | modify swap configs to disabling it permanently
   replace:
     path: /etc/fstab
     regexp: '^([^#].*?\sswap\s+sw\s+.*)$'
     replace: '# \1'
   when: ansible_swaptotal_mb > 0
 
-- name: disable swap
+- name: pre-ini-ops | disable swap
   command: swapoff -a
   when: ansible_swaptotal_mb > 0
 
 - include_tasks: ./open-required-ports.yml
 
-- name: set unique name for hosts
+- name: pre-ini-ops | set unique name for hosts
   shell: echo {{ inventory_hostname }} > /etc/hostname
 
-- name: update /etc/hosts
+- name: pre-ini-ops | update /etc/hosts
   vars: 
     ip: "{{ hostvars[item]['ansible_host'] }}" 
     node_name: "{{ hostvars[item]['ansible_nodename'] }}" 
@@ -25,7 +25,7 @@
     state: present
   loop: "{{ groups['all'] | difference([inventory_hostname]) }}"
 
-- name: remove extra dns records | commnet line DNS= in /etc/systemd/resolved.conf
+- name: pre-ini-ops | remove extra dns records
   replace:
     path: /etc/systemd/resolved.conf
     regexp: '^(DNS=.*)'
