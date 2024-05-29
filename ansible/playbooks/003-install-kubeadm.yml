@@ -7,15 +7,16 @@
       setup:
 
 
-# - hosts: localhost
-#   connection: local
-#   gather_facts: false
-#   tasks: 
-#     - include_tasks: ../roles/install-kubeadm/tasks/pre-flight-checks.yml
+- hosts: localhost
+  connection: local
+  gather_facts: false
+  tasks: 
+    - include_tasks: ../roles/install-kubeadm/tasks/pre-flight-checks.yml
 
 
 - hosts: k8s_cluster
   gather_facts: false
-  become: yes
+  become: true
+  become_user: root
   roles: 
     - { role: install-kubeadm } 
