@@ -1,6 +1,8 @@
 - hosts: kube_control_plane[0]
   gather_facts: false
   become: true
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
   tasks:
     - name: join worker nodes | create token
       command: kubeadm token create --print-join-command
