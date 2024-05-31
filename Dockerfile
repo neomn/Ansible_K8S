@@ -14,6 +14,7 @@ RUN    apk update && apk add \
        git \
        py3-jsonpatch=1.32-r2 \
        py3-yaml=6.0-r0 \
+       rsync=3.2.7-r0 \
        fish
        
 WORKDIR  /ansible 
