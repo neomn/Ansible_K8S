@@ -2,6 +2,7 @@
 - name: install required packages | install pre-requisits packages
   apt:
     name: 
+      - rsync=3.2.7-1ubuntu1
       - apt-transport-https 
       - ca-certificates 
       - curl 
