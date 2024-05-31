@@ -12,8 +12,23 @@
 
 - include_tasks: ./open-required-ports.yml
 
-- name: pre-ini-ops | set unique name for hosts
+- name: pre-init-ops | get host name /etc/hostname
+  command: cat /etc/hostname
+  register: etc_hostname
+  changed_when: false
+
+- name: pre-ini-ops | set unique name for host in /etc/hostname
   shell: echo {{ inventory_hostname }} > /etc/hostname
+  when: etc_hostname.stdout != inventory_hostname
+
+- name: pre-init-ops | set unique name for host in env
+  lineinfile:
+    path: /root/.bashrc
+    line: "export hostname={{ inventory_hostname }}"
+
+- name: pre-init-ops | update node name
+  set_fact:
+    ansible_nodename: "{{ inventory_hostname }}"
 
 - name: pre-ini-ops | update /etc/hosts
   vars: 
