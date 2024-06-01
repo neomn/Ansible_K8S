@@ -25,6 +25,12 @@
           path: /etc/kubernetes/pki
           state: directory
  
+      - name: join admin nodes | copy certs to other admin nodes
+        synchronize: 
+          src: /tmp/pki/
+          dest: "/etc/kubernetes/pki/"
+          mode: push
+
       when: inventory_hostname != groups['kube_control_plane'][0]
       any_errors_fatal: true
 
