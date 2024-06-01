@@ -37,3 +37,12 @@
       when: inventory_hostname != groups['kube_control_plane'][0]
       any_errors_fatal: true
 
+- hosts: localhost
+  connection: local
+  gather_facts: false
+  become: true
+  tasks: 
+    - name: join admin nodes | remove cert files from controller node
+      file:
+        path: /tmp/pki/
+        state: absent
