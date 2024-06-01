@@ -1,16 +1,19 @@
 ---
-- hosts: kube_control_plane[0]
+- hosts: kube_control_plane
   gather_facts: false
   become: true
-  tasks:
-    - name: join admin nodes | create token
-      command: kubeadm token create --print-join-command
-      register: join_command
-
-- hosts: kube_control_plane[1:]
-  gather_facts: false
-  become: true
-  tasks:
-    - name: join admin nodes | run join command
-      command: "{{ hostvars[ groups['kube_control_plane'][0] ].join_command.stdout }} --control-plane"
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
+  tasks: 
+    
+    - block:
+      - name: join admin nodes | download certs on controller machine
+        synchronize:
+          src: /etc/kubernetes/pki/
+          dest: /tmp/pki/
+          mode: pull
+          
+      when: inventory_hostname == groups['kube_control_plane'][0]
+      any_errors_fatal: true
+         
 
