@@ -31,6 +31,9 @@
           dest: "/etc/kubernetes/pki/"
           mode: push
 
+      - name: join admin nodes | run join command
+        command: "{{ hostvars[ groups['kube_control_plane'][0] ].join_command.stdout }} --control-plane --ignore-preflight-errors NumCPU"
+        when: inventory_hostname != groups['kube_control_plane'][0]
       when: inventory_hostname != groups['kube_control_plane'][0]
       any_errors_fatal: true
 
