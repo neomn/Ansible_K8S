@@ -19,4 +19,12 @@
       when: inventory_hostname == groups['kube_control_plane'][0]
       any_errors_fatal: true
          
+    - block:     
+      - name: join admin nodes | create /etc/kubernetes/pki directory
+        file: 
+          path: /etc/kubernetes/pki
+          state: directory
+ 
+      when: inventory_hostname != groups['kube_control_plane'][0]
+      any_errors_fatal: true
 
