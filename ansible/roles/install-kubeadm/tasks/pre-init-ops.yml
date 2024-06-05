@@ -13,12 +13,16 @@
 - include_tasks: ./open-required-ports.yml
 
 - name: pre-init-ops | get host name /etc/hostname
-  command: cat /etc/hostname
+  command: hostname
   register: etc_hostname
   changed_when: false
 
 - name: pre-ini-ops | set unique name for host in /etc/hostname
   shell: echo {{ inventory_hostname }} > /etc/hostname
+  when: etc_hostname.stdout != inventory_hostname
+
+- name: pre-ini-ops | set unique name for host using hostname command
+  command: hostname {{ inventory_hostname }}
   when: etc_hostname.stdout != inventory_hostname
 
 - name: pre-init-ops | set unique name for host in env
