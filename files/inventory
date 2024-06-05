@@ -1,29 +1,20 @@
-## Configure 'ip' variable to bind kubernetes services on a
-## different ip than the default iface
 
-# node1    ansible_host=5.42.95.45       ansible_user=ansible  ansible_ssh_port="{{ custom_ssh_port }}"  ip=5.42.95.45    
-node2    ansible_host=77.232.142.121   ansible_user=ansible  ansible_ssh_port="{{ custom_ssh_port }}"  ip=77.232.142.121
-node3    ansible_host=5.42.84.28       ansible_user=ansible  ansible_ssh_port="{{ custom_ssh_port }}"  ip=5.42.84.28
-node4    ansible_host=5.42.95.45       ansible_user=ansible  ansible_ssh_port="{{ custom_ssh_port }}"  ip=5.42.95.45   
-node5    ansible_host=5.42.83.254      ansible_user=ansible  ansible_ssh_port="{{ custom_ssh_port }}"  ip=5.42.83.254   
-node6    ansible_host=77.232.142.146   ansible_user=ansible  ansible_ssh_port="{{ custom_ssh_port }}"  ip=77.232.142.146
-# node7    ansible_host=5.42.83.254      ansible_user=ansible  ansible_ssh_port="{{ custom_ssh_port }}"  ip=5.42.83.254   
-
-
-[load_balancer]
-# node1
-node2
+node1    ansible_host=5.42.84.28       ansible_user=ansible  ansible_ssh_port="{{ custom_ssh_port }}" 
+node2    ansible_host=5.42.95.45       ansible_user=ansible  ansible_ssh_port="{{ custom_ssh_port }}" 
+node3    ansible_host=5.42.83.254      ansible_user=ansible  ansible_ssh_port="{{ custom_ssh_port }}" 
+node4    ansible_host=77.232.142.146   ansible_user=ansible  ansible_ssh_port="{{ custom_ssh_port }}" 
+node5    ansible_host=77.232.142.121   ansible_user=ansible  ansible_ssh_port="{{ custom_ssh_port }}" 
 
 
 [kube_control_plane]
+node1
+node2
 node3
-node4
-node5
 
 
 [kube_node]
-node6
-# worker7
+node4
+node5
 
 
 [k8s_cluster:children]
