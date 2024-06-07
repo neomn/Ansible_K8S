@@ -49,7 +49,12 @@
     path: /etc/hosts
     line: "{{ VIP }} {{ VIP_DNS_RECORD }}"
     state: present
-     
+
+- name: pre-init-ops | create /etc/kubernetes/manifests directory
+  file: 
+    path: /etc/kubernetes/manifests
+    state: directory
+      
 - name: pre-init-ops | remove extra dns records
   replace:
     path: /etc/systemd/resolved.conf
