@@ -7,42 +7,37 @@
   tasks: 
     
     - block:
-      - name: join admin nodes | download certs on controller machine
-        synchronize:
-          src: /etc/kubernetes/pki/
-          dest: /tmp/pki/
-          mode: pull
-          
-      - name: join admin nodes | create token
-        command: kubeadm token create --print-join-command
-        register: join_command
+      
+      - name: join-admin-nodes | generate join commands(each node requires specific command)
+        
+      - name: join-admin-nodes | modify join commands
+
       when: inventory_hostname == groups['kube_control_plane'][0]
-      any_errors_fatal: true
-         
-    - block:     
-      - name: join admin nodes | create /etc/kubernetes/pki directory
-        file: 
-          path: /etc/kubernetes/pki
-          state: directory
- 
-      - name: join admin nodes | copy certs to other admin nodes
-        synchronize: 
-          src: /tmp/pki/
-          dest: "/etc/kubernetes/pki/"
-          mode: push
+  
+        
+        
+    - block: 
+      
+      - name: join-admin-nodes | add VIP dns record to /etc/hosts
+        lineinfile:
+          path: /etc/hosts
+          line: "{{ ansible_host }} {{ hostvars[ groups['kube_control_plane'][0] ].ansible_host }}"
+          state: present
+        
+      - name: join-admin-nodes | copy kube-vip conf file to /etc/kubernetes/manifests/
+        copy:
+          src: ../roles/install-kubeadm/files/kube-vip.yaml
+          dest: /etc/kubernetes/manifests/kube-vip.yaml
+          mode: 0600
 
-      - name: join admin nodes | run join command
-        command: "{{ hostvars[ groups['kube_control_plane'][0] ].join_command.stdout }} --control-plane --ignore-preflight-errors NumCPU"
-        when: inventory_hostname != groups['kube_control_plane'][0]
+      - name: join-admin-nodes | run join command
+        command: "{{ hostvars[ groups['kube_control_plane'][0] ].join_command.stdout }}  --ignore-preflight-errors NumCPU"
+
+      - name: join-admin-nodes | update VIP dns record 
+        replace:
+          path: /etc/hosts
+          exp: 
+          with: 
+        
       when: inventory_hostname != groups['kube_control_plane'][0]
-      any_errors_fatal: true
 
-- hosts: localhost
-  connection: local
-  gather_facts: false
-  become: true
-  tasks: 
-    - name: join admin nodes | remove cert files from controller node
-      file:
-        path: /tmp/pki/
-        state: absent
