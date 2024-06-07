@@ -44,7 +44,13 @@
     state: present
   loop: "{{ groups['all'] | difference([inventory_hostname]) }}"
 
-- name: pre-ini-ops | remove extra dns records
+- name: pre-init-ops | add virtual ip dns record to /etc/hosts
+  lineinfile:
+    path: /etc/hosts
+    line: "{{ VIP }} {{ VIP_DNS_RECORD }}"
+    state: present
+     
+- name: pre-init-ops | remove extra dns records
   replace:
     path: /etc/systemd/resolved.conf
     regexp: '^(DNS=.*)'
