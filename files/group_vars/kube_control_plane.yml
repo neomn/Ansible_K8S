@@ -1,4 +1,6 @@
 --- 
+VIP_DNS_RECORD: kube-api-server
+VIP: 192.168.0.40
 APISERVER_PORT: 6443
   
 # kubeadm init \
