@@ -55,6 +55,12 @@
     path: /etc/kubernetes/manifests
     state: directory
       
+- name: pre-init-ops | copy kube-vip conf file to /etc/kubernetes/manifests
+  copy: 
+    src: ../files/kube-vip.yaml
+    dest: /etc/kubernetes/manifests/kube-vip.yaml
+    mode: 0600
+
 - name: pre-init-ops | remove extra dns records
   replace:
     path: /etc/systemd/resolved.conf
