@@ -1,5 +1,5 @@
-alias a1='ssh -p 22322 ansible@5.42.84.28'
-alias a2='ssh -p 22322 ansible@5.42.95.45'
-alias a3='ssh -p 22322 ansible@5.42.83.254'
+alias m1='ssh -p 22322 ansible@5.42.84.28'
+alias m2='ssh -p 22322 ansible@5.42.95.45'
+alias m3='ssh -p 22322 ansible@5.42.83.254'
 alias w1='ssh -p 22322 ansible@77.232.142.146'
 alias w2='ssh -p 22322 ansible@77.232.142.121'
