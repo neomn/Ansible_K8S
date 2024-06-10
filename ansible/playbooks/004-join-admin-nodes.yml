@@ -11,6 +11,10 @@
         register: CERT_KEY
         shell: kubeadm init phase upload-certs --upload-certs | awk 'NR==3'
 
+      - name: join-admin-nodes | generate join commands
+        register: initial_join_command
+        shell: "kubeadm token create --print-join-command --certificate-key {{CERT_KEY.stdout}}"
+        
       when: inventory_hostname == groups['kube_control_plane'][0]
         
 
