@@ -1,17 +1,26 @@
-- hosts: kube_control_plane[0]
+---
+- hosts: all
   gather_facts: false
   become: true
-  environment:
-    KUBECONFIG: /etc/kubernetes/admin.conf
-  tasks:
-    - name: join worker nodes | create token
-      command: kubeadm token create --print-join-command
-      register: join_command
-
-- hosts: kube_node
-  gather_facts: false
-  become: true
-  tasks:
-    - name: join worker nodes | run join command
-      command: "{{ hostvars[ groups['kube_control_plane'][0] ].join_command.stdout }}"
-
+  tasks: 
+    
+    - block:
+      - name: join-admin-nodes | generate join commands
+        register: initial_join_command
+        shell: "kubeadm token create --print-join-command"
+        
+      - name: join-admin-nodes | modify join commands
+        set_fact:
+          join_command: "{{ initial_join_command.stdout }} --ignore-preflight-errors NumCPU"
+      when: inventory_hostname == groups['kube_control_plane'][0]
+        
+    - block: 
+      - name: join-admin-nodes | add VIP dns record to /etc/hosts
+        lineinfile:
+          path: /etc/hosts
+          line: "{{ hostvars[ groups['kube_control_plane'][0] ].ansible_host }} {{ VIP_DNS_RECORD }}"
+          state: present
+        
+      - name: join-admin-nodes | run join command
+        shell: "{{ hostvars[ groups['kube_control_plane'][0] ].join_command }}"
+      when: inventory_hostname in groups['kube_node']
