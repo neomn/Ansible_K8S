@@ -28,4 +28,11 @@
           line: "{{ hostvars[ groups['kube_control_plane'][0] ].ansible_host }} {{ VIP_DNS_RECORD }}"
           state: present
         
+      - name: join-admin-nodes | copy kube-vip conf file to /etc/kubernetes/manifests/
+        copy:
+          src: ../roles/install-kubeadm/files/kube-vip.yaml
+          dest: /etc/kubernetes/manifests/kube-vip.yaml
+          mode: 0600
+
+
       when: inventory_hostname != groups['kube_control_plane'][0]
