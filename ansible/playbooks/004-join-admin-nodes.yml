@@ -37,4 +37,9 @@
       - name: join-admin-nodes | run join command
         shell: "{{ hostvars[ groups['kube_control_plane'][0] ].join_command }}"
 
+      - name: join-admin-nodes | update VIP dns record 
+        replace:
+          path: /etc/hosts
+          regexp: '^(.*){{VIP_DNS_RECORD}}$'
+          replace: "{{VIP}} {{VIP_DNS_RECORD}}" 
       when: inventory_hostname != groups['kube_control_plane'][0]
