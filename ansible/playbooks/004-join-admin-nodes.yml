@@ -21,3 +21,11 @@
       when: inventory_hostname == groups['kube_control_plane'][0]
         
 
+    - block: 
+      - name: join-admin-nodes | add VIP dns record to /etc/hosts
+        lineinfile:
+          path: /etc/hosts
+          line: "{{ hostvars[ groups['kube_control_plane'][0] ].ansible_host }} {{ VIP_DNS_RECORD }}"
+          state: present
+        
+      when: inventory_hostname != groups['kube_control_plane'][0]
