@@ -18,5 +18,6 @@
   gather_facts: false
   become: true
   become_user: root
+  any_errors_fatal: true
   roles: 
     - { role: install-kubeadm } 
