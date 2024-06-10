@@ -34,5 +34,7 @@
           dest: /etc/kubernetes/manifests/kube-vip.yaml
           mode: 0600
 
+      - name: join-admin-nodes | run join command
+        shell: "{{ hostvars[ groups['kube_control_plane'][0] ].join_command }}"
 
       when: inventory_hostname != groups['kube_control_plane'][0]
