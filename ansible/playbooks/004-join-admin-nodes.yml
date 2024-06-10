@@ -7,37 +7,10 @@
   tasks: 
     
     - block:
-      
-      - name: join-admin-nodes | generate join commands(each node requires specific command)
-        
-      - name: join-admin-nodes | modify join commands
+      - name: join-admin-nodes | run kubeadm upload certs phase to get certificate-key
+        register: CERT_KEY
+        shell: kubeadm init phase upload-certs --upload-certs | awk 'NR==3'
 
       when: inventory_hostname == groups['kube_control_plane'][0]
-  
         
-        
-    - block: 
-      
-      - name: join-admin-nodes | add VIP dns record to /etc/hosts
-        lineinfile:
-          path: /etc/hosts
-          line: "{{ ansible_host }} {{ hostvars[ groups['kube_control_plane'][0] ].ansible_host }}"
-          state: present
-        
-      - name: join-admin-nodes | copy kube-vip conf file to /etc/kubernetes/manifests/
-        copy:
-          src: ../roles/install-kubeadm/files/kube-vip.yaml
-          dest: /etc/kubernetes/manifests/kube-vip.yaml
-          mode: 0600
-
-      - name: join-admin-nodes | run join command
-        command: "{{ hostvars[ groups['kube_control_plane'][0] ].join_command.stdout }}  --ignore-preflight-errors NumCPU"
-
-      - name: join-admin-nodes | update VIP dns record 
-        replace:
-          path: /etc/hosts
-          exp: 
-          with: 
-        
-      when: inventory_hostname != groups['kube_control_plane'][0]
 
