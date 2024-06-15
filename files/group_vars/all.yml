@@ -1,2 +1,4 @@
 ---
+VIP_DNS_RECORD: kube-api-server
+  
 custom_ssh_port: 22322

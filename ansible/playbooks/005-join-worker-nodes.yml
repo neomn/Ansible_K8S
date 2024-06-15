@@ -18,8 +18,9 @@
       - name: join-admin-nodes | add VIP dns record to /etc/hosts
         lineinfile:
           path: /etc/hosts
-          line: "{{ hostvars[ groups['kube_control_plane'][0] ].ansible_host }} {{ VIP_DNS_RECORD }}"
+          line: "{{ hostvars[ item ].ansible_host }} {{ VIP_DNS_RECORD }}"
           state: present
+        loop: "{{ groups['kube_control_plane'] }}"
         
       - name: join-admin-nodes | run join command
         shell: "{{ hostvars[ groups['kube_control_plane'][0] ].join_command }}"
