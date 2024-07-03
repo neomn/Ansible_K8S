@@ -1,0 +1,33 @@
+- hosts: kube_control_plane
+  gather_facts: false
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
+  become: true
+  tasks: 
+  
+    - block: 
+      - name: install-argocd | create argocd namespace
+        k8s:
+          kind: Namespace 
+          name: argocd
+          api_version: v1
+          state: present
+
+      - name: install-argocd | download argocd manifest
+        get_url: 
+          url: https://raw.githubusercontent.com/argoproj/argo-cd/v2.11.3/manifests/ha/install.yaml          
+          dest: ~/argocd-ha-install.yaml
+          mode: 0600
+            
+      - name: install-argocd | apply argocd manifest
+        k8s: 
+          src: ~/argocd-ha-install.yaml
+          namespace: argocd
+          state: present
+          
+      # - name: install-argocd | create requird secrets
+
+      # - name: install-argocd | apply argocd-repositories
+
+          
+      when: inventory_hostname == groups['kube_control_plane'][0]       
