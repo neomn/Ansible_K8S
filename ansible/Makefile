@@ -17,3 +17,6 @@ join-admin-nodes:
 
 join-worker-nodes:
 	ansible-playbook /ansible/playbooks/005-join-worker-nodes.yml
+
+argocd:
+	ansible-playbook /ansible/playbooks/006-install-argocd.yml
