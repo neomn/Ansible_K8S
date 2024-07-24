@@ -5,23 +5,23 @@
   tasks: 
     
     - block:
-      - name: join-admin-nodes | generate join commands
+      - name: join-worker-nodes | generate join commands
         register: initial_join_command
         shell: "kubeadm token create --print-join-command"
         
-      - name: join-admin-nodes | modify join commands
+      - name: join-worker-nodes | modify join commands
         set_fact:
           join_command: "{{ initial_join_command.stdout }} --ignore-preflight-errors NumCPU"
       when: inventory_hostname == groups['kube_control_plane'][0]
         
     - block: 
-      - name: join-admin-nodes | add VIP dns record to /etc/hosts
+      - name: join-worker-nodes | add VIP dns record to /etc/hosts
         lineinfile:
           path: /etc/hosts
           line: "{{ hostvars[ item ].ansible_host }} {{ VIP_DNS_RECORD }}"
           state: present
         loop: "{{ groups['kube_control_plane'] }}"
         
-      - name: join-admin-nodes | run join command
+      - name: join-worker-nodes | run join command
         shell: "{{ hostvars[ groups['kube_control_plane'][0] ].join_command }}"
       when: inventory_hostname in groups['kube_node']
