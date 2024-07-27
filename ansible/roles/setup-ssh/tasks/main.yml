@@ -17,14 +17,11 @@
     state:  directory
 
 
-- name: copy authorized_keys file
-  copy:
-    src:   /files/secrets/authorized_keys
-    dest:  /home/ansible/.ssh
-    owner: ansible
-    group: root
-    mode:  0600
-
+- name: add sweetiot ssh public key to authorized_keys
+  authorized_key:
+    user: ansible
+    state: present
+    key: "{{ lookup('file', '/files/secrets/sweetiot_ssh_key.pub') }}"
 
 - name: add ansible user to sudoers
   copy:
