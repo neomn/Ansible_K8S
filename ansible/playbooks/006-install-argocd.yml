@@ -24,10 +24,4 @@
           src: ~/argocd-ha-install.yaml
           namespace: argocd
           state: present
-          
-      # - name: install-argocd | create requird secrets
-
-      # - name: install-argocd | apply argocd-repositories
-
-          
       when: inventory_hostname == groups['kube_control_plane'][0]       
