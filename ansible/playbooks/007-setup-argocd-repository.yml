@@ -1,0 +1,25 @@
+- hosts: kube_control_plane
+  gather_facts: false
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
+  become: true
+  tasks: 
+
+    - block:
+      - name: setup-argocd-repository | change argocd resource tracking strategy
+        k8s:
+          state: present
+          definition:
+            apiVersion: v1
+            kind: ConfigMap
+            metadata:
+              name: argocd-cm
+              namespace: argocd
+            labels:
+              app.kubernetes.io/name: argocd-cm
+              app.kubernetes.io/part-of: argocd
+            data:
+              application.resourceTrackingMethod: annotation+lable
+      
+        
+      when: inventory_hostname == groups['kube_control_plane'][0]
