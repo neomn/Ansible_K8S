@@ -21,5 +21,32 @@
             data:
               application.resourceTrackingMethod: annotation+lable
       
+      # - name: setup-argocd-repository | add namespaces to argocd and restart argocd-server and argocd-app-controller
+      #   k8s:
+      #     state: present
+      #     definition:
+      #       apiVersion: v1
+      #       data:
+      #         redis.server: argocd-redis-ha-haproxy:6379
+      #       kind: ConfigMap
+      #       metadata:
+      #         labels:
+      #           app.kubernetes.io/name: argocd-cmd-params-cm
+      #           app.kubernetes.io/part-of: argocd
+      #         name: argocd-cmd-params-cm
+      #         namespace: argocd
+      #
+
+      - name: setup-argocd-repository | specify namespaces which argocd can manage
+        kubernetes.core.k8s:
+          api_version: v1
+          kind: ConfigMap
+          name: argocd-cmd-params-cm
+          namespace: argocd
+          merge_type: merge
+          definition:
+            data:
+              application.namespaces: "kube-system, dev, prod"
+
         
       when: inventory_hostname == groups['kube_control_plane'][0]
