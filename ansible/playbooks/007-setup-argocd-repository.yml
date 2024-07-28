@@ -85,4 +85,28 @@
               username: "{{ lookup('file', 'GITLAB_USERNAME')}}"
               password: "{{ lookup('env', 'GITLAB_READ_REPO_ACCESS_TOKEN') }}"
         
+      - name: setup-argocd-repository | create bootstrap application
+        k8s:
+          state: present
+          definition: 
+            apiVersion: argoproj.io/v1alpha1
+            kind: Application
+            metadata:
+              name: cluster-bootstrap
+              namespace: dev
+            spec:
+              project: default
+              source:
+                repoURL: https://gitlab.com/sweetiot/deployment/sweetiot_gitops.git 
+                targetRevision: bootstrap
+                path: templates
+              destination:
+                server: https://kubernetes.default.svc
+                namespace: sweetiot
+              syncPolicy:
+                automated:
+                  prune: true
+                  selfHeal: true     
+                syncOptions:
+                  - CreateNamespace=true
       when: inventory_hostname == groups['kube_control_plane'][0]
