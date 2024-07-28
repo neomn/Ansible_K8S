@@ -59,5 +59,30 @@
           state: present
           definition:
 
+
+      - name: setup-argocd-repository | Allowing additional namespaces in an AppProject
+        k8s:
+          state: present
+          definition:
+
+      - name: setup-argocd-repository | add sweetiot git repo
+        vars: 
+          ssh_key: "{{ lookup('file', '/files/secrets/sweetiot_gitops_repo_ssh_key') }}"
+          state: present
+        k8s:
+          state: present
+          definition:
+            apiVersion: v1
+            kind: Secret
+            metadata:
+              name: sweetiot-gitops-repo-ssh-key
+              namespace: argocd
+              labels:
+                argocd.argoproj.io/secret-type: repository
+            stringData:
+              type: git
+              url: https://gitlab.com/sweetiot/deployment/sweetiot_gitops.git
+              username: "{{ lookup('file', 'GITLAB_USERNAME')}}"
+              password: "{{ lookup('env', 'GITLAB_READ_REPO_ACCESS_TOKEN') }}"
         
       when: inventory_hostname == groups['kube_control_plane'][0]
