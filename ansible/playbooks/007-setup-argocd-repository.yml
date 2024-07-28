@@ -48,5 +48,16 @@
             data:
               application.namespaces: "kube-system, dev, prod"
 
+      - name: setup-argocd-repository | restart argocd-server and argocd-app-controller
+        shell: |
+          kubectl rollout restart -n argocd deployment argocd-server &&
+          kubectl rollout restart -n argocd statefulset argocd-application-controller
+        
+
+      - name: setup-argocd-repository | Adapt Kubernetes RBAC
+        k8s:
+          state: present
+          definition:
+
         
       when: inventory_hostname == groups['kube_control_plane'][0]
