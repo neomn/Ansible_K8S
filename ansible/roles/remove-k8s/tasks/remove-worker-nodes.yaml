@@ -1,0 +1,36 @@
+- name: drain worker nodes
+  shell: kubectl drain {{ item }} --delete-emptydir-data --force --grace-period 0 --timeout 30s
+  loop: "{{ groups['kube_node']}}"
+  when: inventory_hostname == groups['kube_control_plane'][0]
+  ignore_errors: true
+
+- block: # runs on worker nodes 
+  - name: run kubeadm reset worker nodes
+    shell: kubeadm reset -f 
+    loop: "{{ groups['kube_node']}}"
+      
+  - name: remove the rest files and directories which kubeadm does not delete
+    file:
+      path: "{{ item }}"
+        state: absent
+    loop:
+      - /etc/kubernetes
+      - /etc/cni/.net.d
+      - /var/lib/kubelet
+      - /var/lib/etcd
+    loop: "{{ groups['kube_node']}}"
+        
+  - name: remove k8s components from worker nodes 
+    package:
+      name:
+        - kubelet
+        - kubeadm
+        - kubectl
+        - kube-proxy
+      state: absent
+  when: inventory_hostname in groups['kube_node']
+    
+- name: delete worker nodes from cluster
+  shell: kubectl delete node {{ item }} 
+  loop: "{{ groups['kube_node'] }}"
+  when: inventory_hostname == groups['kube_control_plane'][0]   
