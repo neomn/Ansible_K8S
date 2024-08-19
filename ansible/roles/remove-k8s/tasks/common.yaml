@@ -1,0 +1,35 @@
+# this one is do fix Client-side throttling response when trying to drain worker nodes 
+- name: remove kube cache directory from master nodes
+  file:
+    path: /root/.kube/cache
+    state: absent
+  when: inventory_hostname in groups['kube_control_plane']
+
+- name: flush all iptables rules
+  become: yes
+  command: "{{ item }}"
+  loop:
+    - iptables -F
+    - iptables -X
+    - iptables -t nat -F
+    - iptables -t nat -X
+    - iptables -t mangle -F
+    - iptables -t mangle -X
+    - iptables -t raw -F
+    - iptables -t raw -X
+    - iptables -t security -F
+    - iptables -t security -X
+    - iptables -P INPUT ACCEPT
+    - iptables -P FORWARD ACCEPT
+    - iptables -P OUTPUT ACCEPT
+  ignore_errors: yes
+
+- name: save iptables rules
+  become: yes
+  command: "{{ item }}"
+  loop:
+    - netfilter-persistent save
+    - netfilter-persistent reload
+  ignore_errors: yes
+
+
