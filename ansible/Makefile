@@ -6,6 +6,9 @@ password-ping:
 ping:
 	ansible -m ping all
 
+remove-k8s: 
+	ansible-playbook /ansible/playbooks/001-remove-k8s.yaml
+
 setup-ssh:
 	ansible-playbook -i /files/inventory-setup-ssh   playbooks/001-setup-ssh-connection.yml
 
