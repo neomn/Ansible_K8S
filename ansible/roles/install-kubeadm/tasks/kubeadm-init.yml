@@ -1,4 +1,33 @@
 --- 
+- name: set cri socket
+  set_fact:
+    CRI_SOCKET: "{{ CONTAINER_RUNTIME_SOCKET_ADDRESS_DOCKER }}"
+  when: CONTAINER_RUNTIME == "docker"
+    
+- name: set cri socket
+  set_fact:
+    CRI_SOCKET: "{{ CONTAINER_RUNTIME_SOCKET_ADDRESS_CONTAINERD }}"
+  when: CONTAINER_RUNTIME == "containerd"
+ 
+# - name: setup container runtime premanently
+#   lineinfile:
+#     line: "export CONTAINER_RUNTIME_ENDPOINT={{ CONTAINER_RUNTIME_SOCKET_ADDRESS_DOCKER }}"
+#     path: /root/.bashrc
+#   when: CONTAINER_RUNTIME == "docker"
+#
+# - name: setup container runtime premanently
+#   lineinfile:
+#     line: "export CONTAINER_RUNTIME_ENDPOINT={{ CONTAINER_RUNTIME_SOCKET_ADDRESS_CONTAINERD }}"
+#     path: /root/.bashrc
+#   when: CONTAINER_RUNTIME == "containerd"
+#
+# - name: update env
+#   become: yes
+#   become_user: root
+#   shell: . /root/.bashrc
+#
+- name: kubeadm init | pull kubeadm required images before initialization
+  shell: "kubeadm config images pull --cri-socket {{ CRI_SOCKET }}"
 
 - name: kubeadm init | run kubeadm init command
   shell: |
@@ -7,5 +36,6 @@
       --apiserver-advertise-address "{{ ansible_host }}" \
       --pod-network-cidr 192.168.0.0/16 \
       --upload-certs \
-      --ignore-preflight-errors NumCPU                           
+      --ignore-preflight-errors NumCPU \                          
+      --cri-socket "{{ CRI_SOCKET }}"
   when: inventory_hostname == groups['kube_control_plane'][0]

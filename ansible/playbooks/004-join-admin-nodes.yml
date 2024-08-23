@@ -4,7 +4,19 @@
   become: true
   environment:
     KUBECONFIG: /etc/kubernetes/admin.conf
+  vars_files:
+    - /files/configs.yaml
   tasks: 
+
+    - name: set cri socket
+      set_fact:
+        CRI_SOCKET: "{{ CONTAINER_RUNTIME_SOCKET_ADDRESS_DOCKER }}"
+      when: CONTAINER_RUNTIME == "docker"
+    
+    - name: set cri socket
+      set_fact:
+        CRI_SOCKET: "{{ CONTAINER_RUNTIME_SOCKET_ADDRESS_CONTAINERD }}"
+      when: CONTAINER_RUNTIME == "containerd"
     
     - block:
       - name: join-admin-nodes | run kubeadm upload certs phase to get certificate-key
@@ -17,7 +29,9 @@
         
       - name: join-admin-nodes | modify join commands
         set_fact:
-          join_command: "{{ initial_join_command.stdout }} --ignore-preflight-errors NumCPU"
+          join_command: "{{ initial_join_command.stdout }} \ 
+            --ignore-preflight-errors NumCPU \
+            --cri-socket {{ CRI_SOCKET }} "
       when: inventory_hostname == groups['kube_control_plane'][0]
         
 

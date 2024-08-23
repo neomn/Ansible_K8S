@@ -2,8 +2,20 @@
 - hosts: all
   gather_facts: false
   become: true
+  vars_files:
+    - /files/configs.yaml
   tasks: 
+ 
+    - name: set cri socket
+      set_fact:
+        CRI_SOCKET: "{{ CONTAINER_RUNTIME_SOCKET_ADDRESS_DOCKER }}"
+      when: CONTAINER_RUNTIME == "docker"
     
+    - name: set cri socket
+      set_fact:
+        CRI_SOCKET: "{{ CONTAINER_RUNTIME_SOCKET_ADDRESS_CONTAINERD }}"
+      when: CONTAINER_RUNTIME == "containerd"   
+        
     - block:
       - name: join-worker-nodes | generate join commands
         register: initial_join_command
@@ -11,7 +23,9 @@
         
       - name: join-worker-nodes | modify join commands
         set_fact:
-          join_command: "{{ initial_join_command.stdout }} --ignore-preflight-errors NumCPU"
+          join_command: "{{ initial_join_command.stdout }} \ 
+            --ignore-preflight-errors NumCPU \ 
+            --cri-socket {{ CRI_SOCKET }} "
       when: inventory_hostname == groups['kube_control_plane'][0]
         
     - block: 
