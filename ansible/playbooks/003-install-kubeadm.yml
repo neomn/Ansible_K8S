@@ -19,5 +19,7 @@
   become: true
   become_user: root
   any_errors_fatal: true
+  vars_files: 
+    - /files/configs.yaml
   roles: 
     - { role: install-kubeadm } 
