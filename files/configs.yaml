@@ -1,0 +1,7 @@
+---
+
+# supported container runtimes: docker , containerd
+CONTAINER_RUNTIME: "docker"
+
+CONTAINER_RUNTIME_SOCKET_ADDRESS_DOCKER: "unix:///var/run/cri-dockerd.sock"
+CONTAINER_RUNTIME_SOCKET_ADDRESS_CONTAINERD: "unix:///var/run/containerd/containerd.sock"
