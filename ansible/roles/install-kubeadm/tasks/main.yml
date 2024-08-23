@@ -1,5 +1,16 @@
 --- 
 - include_tasks: ./pre-init-ops.yml
+  
+- include_tasks: ./install-containerd.yaml
+  when: CONTAINER_RUNTIME == "containerd"
+    
+- name: install docker and cri-dockerd
+  include_tasks: "{{ item }}"
+  when: CONTAINER_RUNTIME == "docker"
+  loop:
+    - ./install-docker.yaml
+    - ./install-cri-dockerd.yaml
+
 - include_tasks: ./install-required-packages.yml
 - include_tasks: ./kubeadm-init.yml
 - include_tasks: ./post-init-ops.yml
