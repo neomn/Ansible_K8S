@@ -24,12 +24,3 @@
     - iptables -P OUTPUT ACCEPT
   ignore_errors: yes
 
-- name: save iptables rules
-  become: yes
-  command: "{{ item }}"
-  loop:
-    - netfilter-persistent save
-    - netfilter-persistent reload
-  ignore_errors: yes
-
-

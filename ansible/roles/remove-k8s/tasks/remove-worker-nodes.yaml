@@ -20,13 +20,18 @@
       - /var/lib/etcd
     loop: "{{ groups['kube_node']}}"
         
-  - name: remove k8s components from worker nodes 
+  - name: stop and disable kubelet on worker nodes
+    systemd:
+      name: kubelet
+      state: stopped
+      enabled: no
+
+  - name: Remove Kubernetes components from worker nodes
     package:
       name:
-        - kubelet
         - kubeadm
+        - kubelet
         - kubectl
-        - kube-proxy
       state: absent
   when: inventory_hostname in groups['kube_node']
     

@@ -1,6 +1,6 @@
 - block: # runs on the only remaining master node
   - name: drain master nodes
-    shell: kubectl drain {{ item }} --delete-emptydir-data --force --grace-period 0 --timeout 30s
+    shell: kubectl drain {{ inventory_hostname }} --delete-emptydir-data --force --grace-period 0 --timeout 30s
     ignore_errors: true
 
   - name: run kubeadm reset worker nodes
@@ -9,19 +9,25 @@
   - name: remove the rest files and directories which kubeadm does not delete
     file:
       path: "{{ item }}"
-        state: absent
+      state: absent
     loop:
       - /etc/kubernetes
-      - /etc/cni/.net.d
+      - /etc/cni/net.d
       - /var/lib/kubelet
       - /var/lib/etcd
 
+  - name: stop and disable kubelet on worker nodes
+    systemd:
+      name: kubelet
+      state: stopped
+      enabled: no
+        
   - name: remove k8s components from master nodes 
     package:
       name:
         - kubelet
         - kubeadm
         - kubectl
-        - kube-proxy
       state: absent
+        
   when: inventory_hostname == groups['kube_control_plane'][0]   

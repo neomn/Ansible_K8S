@@ -2,7 +2,5 @@
   become: true
   environment:
     KUBECONFIG: /etc/kubernetes/admin.conf
-  vars:  
-    last_master: "{{ groups['kube_control_plane'][0] }}"  # Change this to the hostname of the master you want to keep
   roles:
     - { role: remove-k8s }
