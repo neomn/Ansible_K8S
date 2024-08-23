@@ -9,3 +9,13 @@
   service: 
     name: systemd-resolved
     state: restarted
+
+- name: restart-docker-service
+  service:
+    name: docker
+    state: restarted
+
+- name: restart-cri-dockerd-service
+  service:
+    name: cri-docker
+    state: restarted
