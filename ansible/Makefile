@@ -1,7 +1,7 @@
 
 
 password-ping:
-	ansible -i /files/inventory-setup-ssh -m ping all
+	ansible -i /files/secrets/inventory-setup-ssh -m ping all
 
 ping:
 	ansible -m ping all
@@ -10,7 +10,7 @@ remove-k8s:
 	ansible-playbook /ansible/playbooks/001-remove-k8s.yaml
 
 setup-ssh:
-	ansible-playbook -i /files/inventory-setup-ssh   playbooks/000-setup-ssh-connection.yml
+	ansible-playbook -i /files/secrets/inventory-setup-ssh   playbooks/000-setup-ssh-connection.yml
 
 cluster:
 	ansible-playbook /ansible/playbooks/003-install-kubeadm.yml

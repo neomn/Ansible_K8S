@@ -1,4 +1,5 @@
 secrets
+.secrets
 .env*
 .secrets
 roles/setup_ssh/inventory

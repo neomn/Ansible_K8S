@@ -1,8 +1,8 @@
 version: "3.8"
 
 services:
-  sweetiot-ansible:
-    image: neomn110/main:ansible.kubeadm.0.0.1
+  ansible:
+    image: neomn110/ansible:0.0.1
     container_name: Ansible-K8S
     tty: true
     volumes:

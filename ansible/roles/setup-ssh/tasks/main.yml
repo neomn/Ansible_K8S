@@ -10,18 +10,11 @@
     state:       present
     create_home: true
 
-
-- name: create .ssh directory for ansible
-  file: 
-    path:   /home/ansible/.ssh
-    state:  directory
-
-
-- name: add sweetiot ssh public key to authorized_keys
+- name: add ssh public key to authorized_keys
   authorized_key:
     user: ansible
     state: present
-    key: "{{ lookup('file', '/files/secrets/sweetiot_ssh_key.pub') }}"
+    key: "{{ lookup('file', '/files/secrets/ssh_key.pub') }}"
 
 - name: add ansible user to sudoers
   copy:
@@ -31,7 +24,6 @@
     group: root
     mode:  0440
       
-
 - name: replace sshd_config file with my custom sshd_config
   template:
     src:   ../templates/sshd_config.j2
@@ -39,11 +31,4 @@
     owner: root
     group: root
     mode:  0644
-
-# since ssh port is defined in group_vars and refrenced dynamically , 
-# notify will not trigger ssh restart, so that's whey im using a 
-# separate task to reload daemon and restart ssh service
-- name: restart ssh
-  shell: |
-    systemctl daemon-reload
-    systemctl restart ssh
+  notify: restart_ssh_service

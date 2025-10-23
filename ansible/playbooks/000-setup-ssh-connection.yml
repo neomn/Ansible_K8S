@@ -1,6 +1,7 @@
 ---
 - hosts: all
   gather_facts: no
+  become: true
   vars:
     ansible_ssh_common_args: '-o StrictHostKeyChecking=no -o PreferredAuthentications=password'
   roles:

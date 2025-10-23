@@ -1,6 +1,6 @@
 ---
 
-- name: pre-flight-checks | check if nodes ram >= 2GB
+- name: pre-flight-checks | check if nodes ram >= 1GB
   vars:
     nodes_ram: "{{ dict(groups['all'] | zip(groups['all'] | map('extract', hostvars, 'ansible_memtotal_mb'))) }}"
   fail:

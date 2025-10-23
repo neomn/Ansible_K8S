@@ -29,9 +29,7 @@
         
       - name: join-admin-nodes | modify join commands
         set_fact:
-          join_command: "{{ initial_join_command.stdout }} \ 
-            --ignore-preflight-errors NumCPU \
-            --cri-socket {{ CRI_SOCKET }} "
+          join_command: "{{ initial_join_command.stdout }} --ignore-preflight-errors NumCPU,Mem --cri-socket {{ CRI_SOCKET }} "
       when: inventory_hostname == groups['kube_control_plane'][0]
         
 
